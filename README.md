@@ -27,3 +27,35 @@
    Давайте начнем с создания каталога для этого проекта. Обычно я использую ~/projects/ для своих проектов, но не стесняйтесь использовать любой путь, который вам удобен.
    
    Первое, что мы сделаем, это напишем наш базовый цикл REPL. Создайте файл с именем main.c (используя touch main.c), затем откройте его с помощью вашего любимого текстового редактора. Введите следующий код в свой main.c:
+
+   #include <stdio.h>
+   #include <stdlib.h>
+   #include <errno.h>
+   #include <string.h>
+   #include "shell.h"
+   int main(int argc, char **argv)
+   {
+      char *cmd;
+      do
+      {
+         print_prompt1();
+         cmd = read_cmd();
+         if(!cmd)
+         {
+               exit(EXIT_SUCCESS);
+         }
+         if(cmd[0] == '\0' || strcmp(cmd, "\n") == 0)
+         {
+               free(cmd);
+               continue;
+         }
+         if(strcmp(cmd, "exit\n") == 0)
+         {
+               free(cmd);
+               break;
+         }
+         printf("%s\n", cmd);
+         free(cmd);
+      } while(1);
+      exit(EXIT_SUCCESS);
+   }
