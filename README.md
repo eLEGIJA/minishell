@@ -86,3 +86,66 @@
       {
          fprintf(stderr, "> ");
       } 
+
+Первая функция выводит первую строку приглашения, или PS1, которую вы обычно видите, когда оболочка ожидает ввода команды. Вторая функция печатает вторую строку приглашения, или PS2, которая печатается оболочкой при вводе многострочной команды (Подробнее об этом ниже).
+
+Далее, Давайте прочитаем некоторые пользовательские данные.
+
+Чтение Пользовательского Ввода
+
+Откройте файл main.c и введите следующий код в конце, сразу после функции main() :
+
+      char *read_cmd(void)
+      {
+         char buf[1024];
+         char *ptr = NULL;
+         char ptrlen = 0;
+
+         while(fgets(buf, 1024, stdin))
+         {
+            int buflen = strlen(buf);
+
+            if(!ptr)
+            {
+               ptr = malloc(buflen+1);
+            }
+            else
+            {
+               char *ptr2 = realloc(ptr, ptrlen+buflen+1);
+
+               if(ptr2)
+               {
+                  ptr = ptr2;
+               }
+               else
+               {
+                  free(ptr);
+                  ptr = NULL;
+               }
+            }
+
+            if(!ptr)
+            {
+               fprintf(stderr, "error: failed to alloc buffer: %s\n", strerror(errno));
+               return NULL;
+            }
+
+            strcpy(ptr+ptrlen, buf);
+
+            if(buf[buflen-1] == '\n')
+            {
+               if(buflen == 1 || buf[buflen-2] != '\\')
+               {
+                  return ptr;
+               }
+
+               ptr[ptrlen+buflen-2] = '\0';
+               buflen -= 2;
+               print_prompt2();
+            }
+
+            ptrlen += buflen;
+         }
+
+         return ptr;
+      }
