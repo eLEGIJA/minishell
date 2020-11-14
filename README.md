@@ -1,10 +1,10 @@
 
-      ███╗░░░███╗ ██╗ ███╗░░██╗ ██╗ ░██████╗ ██╗░░██╗ ███████╗ ██╗░░░░░ ██╗░░░░░
-      ████╗░████║ ██║ ████╗░██║ ██║ ██╔════╝ ██║░░██║ ██╔════╝ ██║░░░░░ ██║░░░░░
-      ██╔████╔██║ ██║ ██╔██╗██║ ██║ ╚█████╗░ ███████║ █████╗░░ ██║░░░░░ ██║░░░░░
-      ██║╚██╔╝██║ ██║ ██║╚████║ ██║ ░╚═══██╗ ██╔══██║ ██╔══╝░░ ██║░░░░░ ██║░░░░░
-      ██║░╚═╝░██║ ██║ ██║░╚███║ ██║ ██████╔╝ ██║░░██║ ███████╗ ███████╗ ███████╗
-      ╚═╝░░░░░╚═╝ ╚═╝ ╚═╝░░╚══╝ ╚═╝ ╚═════╝░ ╚═╝░░╚═╝ ╚══════╝ ╚══════╝ ╚══════╝
+	███╗░░░███╗ ██╗ ███╗░░██╗ ██╗ ░██████╗ ██╗░░██╗ ███████╗ ██╗░░░░░ ██╗░░░░░
+	████╗░████║ ██║ ████╗░██║ ██║ ██╔════╝ ██║░░██║ ██╔════╝ ██║░░░░░ ██║░░░░░
+	██╔████╔██║ ██║ ██╔██╗██║ ██║ ╚█████╗░ ███████║ █████╗░░ ██║░░░░░ ██║░░░░░
+	██║╚██╔╝██║ ██║ ██║╚████║ ██║ ░╚═══██╗ ██╔══██║ ██╔══╝░░ ██║░░░░░ ██║░░░░░
+	██║░╚═╝░██║ ██║ ██║░╚███║ ██║ ██████╔╝ ██║░░██║ ███████╗ ███████╗ ███████╗
+	╚═╝░░░░░╚═╝ ╚═╝ ╚═╝░░╚══╝ ╚═╝ ╚═════╝░ ╚═╝░░╚═╝ ╚══════╝ ╚══════╝ ╚══════╝
 
    # Компоненты оболочки Linux
    
@@ -34,39 +34,39 @@
    
    Первое, что мы сделаем, это напишем наш базовый цикл REPL. Создайте файл с именем main.c (используя touch main.c), затем откройте его с помощью вашего любимого текстового редактора. Введите следующий код в свой main.c:
 
-      #include <stdio.h>
-      #include <stdlib.h>
-      #include <errno.h>
-      #include <string.h>
-      #include "shell.h"
-      
-      int main(int argc, char **argv)
-      {
-         char *cmd;
-         
-         do
-         {
-            print_prompt1();
-            cmd = read_cmd();
-            if(!cmd)
-            {
-               exit(EXIT_SUCCESS);
-            }
-            if(cmd[0] == '\0' || strcmp(cmd, "\n") == 0)
-            {
-               free(cmd);
-               continue;
-            }
-            if(strcmp(cmd, "exit\n") == 0)
-            {
-               free(cmd);
-               break;
-            }
-            printf("%s\n", cmd);
-            free(cmd);
-         } while(1);
-         exit(EXIT_SUCCESS);
-      }
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <errno.h>
+	#include <string.h>
+	#include "shell.h"
+	
+	int main(int argc, char **argv)
+	{
+	   char *cmd;
+	   
+	   do
+	   {
+		print_prompt1();
+		cmd = read_cmd();
+		if(!cmd)
+		{
+		   exit(EXIT_SUCCESS);
+		}
+		if(cmd[0] == '\0' || strcmp(cmd, "\n") == 0)
+		{
+		   free(cmd);
+		   continue;
+		}
+		if(strcmp(cmd, "exit\n") == 0)
+		{
+		   free(cmd);
+		   break;
+		}
+		printf("%s\n", cmd);
+		free(cmd);
+	   } while(1);
+	   exit(EXIT_SUCCESS);
+	}
 
    Наша функция main() довольно проста (я выделил наиболее важные строки, которые мы обсудим далее), так как ей нужно только реализовать цикл REPL. Сначала мы печатаем приглашение оболочки, а затем читаем команду (пока давайте определим команду как строку ввода, заканчивающуюся на \n). Если есть ошибка чтения команды, мы выходим из оболочки. Если команда пуста (то есть пользователь нажал ENTER, ничего не записывая, мы пропускаем этот ввод и продолжаем цикл. Если команда exit, мы выходим из оболочки. В противном случае мы эхом возвращаем команду, освобождаем память, которую мы использовали для хранения команды, и продолжаем цикл.
    
@@ -80,18 +80,18 @@
    
    Теперь создайте исходный файл prompt.c и введите следующий код:
 
-      #include <stdio.h>
-      #include "shell.h"
-      
-      void print_prompt1(void)
-      {
-         fprintf(stderr, "$ ");
-      }
-      
-      void print_prompt2(void)
-      {
-         fprintf(stderr, "> ");
-      } 
+	#include <stdio.h>
+	#include "shell.h"
+	
+	void print_prompt1(void)
+	{
+	   fprintf(stderr, "$ ");
+	}
+	
+	void print_prompt2(void)
+	{
+	   fprintf(stderr, "> ");
+	} 
 
 Первая функция выводит первую строку приглашения, или PS1, которую вы обычно видите, когда оболочка ожидает ввода команды. Вторая функция печатает вторую строку приглашения, или PS2, которая печатается оболочкой при вводе многострочной команды (Подробнее об этом ниже).
 
@@ -101,90 +101,90 @@
 
 Откройте файл main.c и введите следующий код в конце, сразу после функции main() :
 
-      char *read_cmd(void)
-      {
-         char buf[1024];
-         char *ptr = NULL;
-         char ptrlen = 0;
+	char *read_cmd(void)
+	{
+	   char buf[1024];
+	   char *ptr = NULL;
+	   char ptrlen = 0;
 
-         while(fgets(buf, 1024, stdin))
-         {
-            int buflen = strlen(buf);
+	   while(fgets(buf, 1024, stdin))
+	   {
+		int buflen = strlen(buf);
 
-            if(!ptr)
-            {
-               ptr = malloc(buflen+1);
-            }
-            else
-            {
-               char *ptr2 = realloc(ptr, ptrlen+buflen+1);
+		if(!ptr)
+		{
+		   ptr = malloc(buflen+1);
+		}
+		else
+		{
+		   char *ptr2 = realloc(ptr, ptrlen+buflen+1);
 
-               if(ptr2)
-               {
-                  ptr = ptr2;
-               }
-               else
-               {
-                  free(ptr);
-                  ptr = NULL;
-               }
-            }
+		   if(ptr2)
+		   {
+			ptr = ptr2;
+		   }
+		   else
+		   {
+			free(ptr);
+			ptr = NULL;
+		   }
+		}
 
-            if(!ptr)
-            {
-               fprintf(stderr, "error: failed to alloc buffer: %s\n", strerror(errno));
-               return NULL;
-            }
+		if(!ptr)
+		{
+		   fprintf(stderr, "error: failed to alloc buffer: %s\n", strerror(errno));
+		   return NULL;
+		}
 
-            strcpy(ptr+ptrlen, buf);
+		strcpy(ptr+ptrlen, buf);
 
-            if(buf[buflen-1] == '\n')
-            {
-               if(buflen == 1 || buf[buflen-2] != '\\')
-               {
-                  return ptr;
-               }
+		if(buf[buflen-1] == '\n')
+		{
+		   if(buflen == 1 || buf[buflen-2] != '\\')
+		   {
+			return ptr;
+		   }
 
-               ptr[ptrlen+buflen-2] = '\0';
-               buflen -= 2;
-               print_prompt2();
-            }
+		   ptr[ptrlen+buflen-2] = '\0';
+		   buflen -= 2;
+		   print_prompt2();
+		}
 
-            ptrlen += buflen;
-         }
+		ptrlen += buflen;
+	   }
 
-         return ptr;
-      }
+	   return ptr;
+	}
 
 Здесь мы считываем входные данные из stdin в 1024-байтовых блоках и храним их в буфере. В первый раз, когда мы читаем входные данные (первый фрагмент для текущей команды), мы создаем наш буфер с помощью malloc(). Для последующих фрагментов мы расширяем буфер с помощью функции realloc(). Здесь мы не должны сталкиваться с какими-либо проблемами памяти, но если что-то происходит неправильно, мы печатаем сообщение об ошибке и возвращаем NULL. Если все идет хорошо, мы копируем фрагмент ввода, который только что прочитали от пользователя, в наш буфер и соответствующим образом корректируем наши указатели.
 
 Последний блок кода интересен. Чтобы понять, зачем нам нужен этот блок кода, рассмотрим следующий пример. Допустим, вы хотите ввести очень-очень длинную строку ввода:
 
-      echo "This is a very long line of input, one that needs to span two, three, or perhaps even more lines of input, so that we can feed it to the shell"
-      
+	echo "This is a very long line of input, one that needs to span two, three, or perhaps even more lines of input, so that we can feed it to the shell"
+	
  Это глупый пример, но он прекрасно демонстрирует то, о чем мы говорим. Чтобы ввести такую длинную команду, мы можем записать все это в одной строке (как мы сделали здесь), что является громоздким и уродливым процессом. Или мы можем нарезать леску на более мелкие кусочки и скормить эти кусочки Shell, по одному кусочку за раз:
  
-      echo "This is a very long line of input, \
-         one that needs to span two, three, \
-         or perhaps even more lines of input, \
-         so that we can feed it to the shell"
-         
+	echo "This is a very long line of input, \
+	   one that needs to span two, three, \
+	   or perhaps even more lines of input, \
+	   so that we can feed it to the shell"
+	   
 После ввода первой строки и чтобы оболочка знала, что мы не закончили ввод, мы заканчиваем каждую строку символом обратной косой черты \\, за которым следует новая строка (я также сделал отступы в строках, чтобы сделать их более читабельными). Мы называем это экранированием символа новой строки. Когда оболочка видит экранированную новую строку, она знает, что ей нужно отбросить два символа и продолжить чтение ввода.
 
 Теперь давайте вернемся к нашей функции read_cmd (). Мы обсуждали последний блок кода, который гласит:
 
-        if(buf[buflen-1] == '\n')
-        {
-            if(buflen == 1 || buf[buflen-2] != '\\')
-            {
-                return ptr;
-            }
+	  if(buf[buflen-1] == '\n')
+	  {
+		if(buflen == 1 || buf[buflen-2] != '\\')
+		{
+		    return ptr;
+		}
 
-            ptr[ptrlen+buflen-2] = '\0';
-            buflen -= 2;
-            print_prompt2();
-        }
-        
+		ptr[ptrlen+buflen-2] = '\0';
+		buflen -= 2;
+		print_prompt2();
+	  }
+	  
  Здесь мы проверяем, заканчивается ли входной сигнал, который мы получили в буфере, на \n, и если да, то экранируется ли \n символом обратной косой черты \\. Если последний \n не экранирован, то входная строка завершена, и мы возвращаем ее в функцию main (). В противном случае мы удаляем два символа (\\ и \n), распечатываем PS2 и продолжаем чтение ввода.
  
 # Компиляция Shell
@@ -192,16 +192,16 @@
 С приведенным выше кодом наша нишевая оболочка почти готова к компиляции. Мы просто добавим заголовочный файл с нашими прототипами функций, прежде чем приступим к компиляции оболочки. Этот шаг необязателен, но он значительно улучшает читаемость нашего кода и предотвращает появление нескольких предупреждений компилятора.
 Создайте исходный файл shell.h и введите следующий код:
 
-      #ifndef SHELL_H
-      #define SHELL_H
-      
-      void print_prompt1(void);
-      void print_prompt2(void);
-      
-      char *read_cmd(void);
-      
-      #endif 
-      
+	#ifndef SHELL_H
+	#define SHELL_H
+	
+	void print_prompt1(void);
+	void print_prompt2(void);
+	
+	char *read_cmd(void);
+	
+	#endif 
+	
  # Что такое простая команда?
  
 Простая команда состоит из списка слов, разделенных пробелами (пробел, табуляция, новая строка). Первое слово-это имя команды, и оно обязательно (в противном случае оболочка не будет иметь команды для разбора и выполнения!). Второе и последующие слова являются необязательными. Если они присутствуют, они формируют аргументы, которые мы хотим, чтобы оболочка передала выполняемой команде.
@@ -243,101 +243,101 @@ Lookahead (или peek), чтобы проверить следующий сим
 
 Проанализируйте маркеры и создайте абстрактное синтаксическое дерево, или AST. Часть оболочки, ответственная за это, называется синтаксическим анализатором.
 
-      #ifndef SOURCE_H
-      #define SOURCE_H
-      
-      #define EOF             (-1)
-      #define ERRCHAR         ( 0)
-      #define INIT_SRC_POS    (-2)
-      
-      struct source_s
-      {   
-            char *buffer;       /* the input text */
-            long bufsize;       /* size of the input text */
-            long  curpos;       /* absolute char position in source */
-      };
-      
-      char next_char(struct source_s *src);
-      void unget_char(struct source_s *src);
-      char peek_char(struct source_s *src);
-      void skip_white_spaces(struct source_s *src);
-      
-      #endif
-      
+	#ifndef SOURCE_H
+	#define SOURCE_H
+	
+	#define EOF             (-1)
+	#define ERRCHAR         ( 0)
+	#define INIT_SRC_POS    (-2)
+	
+	struct source_s
+	{   
+		char *buffer;       /* the input text */
+		long bufsize;       /* size of the input text */
+		long  curpos;       /* absolute char position in source */
+	};
+	
+	char next_char(struct source_s *src);
+	void unget_char(struct source_s *src);
+	char peek_char(struct source_s *src);
+	void skip_white_spaces(struct source_s *src);
+	
+	#endif
+	
 Сосредоточившись на определении структуры, вы можете увидеть, что наша структура source_s содержит указатель на входную строку, в дополнение к двум длинным полям, которые содержат информацию о длине строки и нашей текущей позиции в строке (откуда мы получим следующий символ).
 
 Теперь создайте еще один файл с именем source.c, в который вы должны добавить следующий код:
 
-      #include <errno.h>
-      #include "shell.h"
-      #include "source.h"
-      
-      void unget_char(struct source_s *src)
-      {
-            if(src->curpos < 0)
-            {
-                  return;
-            }
-            src->curpos--;
-      }
-      
-      char next_char(struct source_s *src)
-      {
-            if(!src || !src->buffer)
-            {
-                  errno = ENODATA;
-                  return ERRCHAR;
-            }
-            char c1 = 0;
-            if(src->curpos == INIT_SRC_POS)
-            {
-                  src->curpos  = -1;
-            }
-            else
-            {
-                  c1 = src->buffer[src->curpos];
-            }
-            if(++src->curpos >= src->bufsize)
-            {
-                  src->curpos = src->bufsize;
-                  return EOF;
-            }
-            return src->buffer[src->curpos];
-      }
-      
-      char peek_char(struct source_s *src)
-      {
-            if(!src || !src->buffer)
-            {
-                  errno = ENODATA;
-                  return ERRCHAR;
-            }
-            long pos = src->curpos;
-            if(pos == INIT_SRC_POS)
-            {
-                  pos++;
-            }
-            pos++;
-            if(pos >= src->bufsize)
-            {
-                  return EOF;
-            }
-            return src->buffer[pos];
-      }
-      
-      void skip_white_spaces(struct source_s *src)
-      {
-            char c;
-            
-            if(!src || !src->buffer)
-            {
-                  return;
-            }
-            while(((c = peek_char(src)) != EOF) && (c == ' ' || c == '\t'))
-            {
-                  next_char(src);
-            }
-      }
+	#include <errno.h>
+	#include "shell.h"
+	#include "source.h"
+	
+	void unget_char(struct source_s *src)
+	{
+		if(src->curpos < 0)
+		{
+			return;
+		}
+		src->curpos--;
+	}
+	
+	char next_char(struct source_s *src)
+	{
+		if(!src || !src->buffer)
+		{
+			errno = ENODATA;
+			return ERRCHAR;
+		}
+		char c1 = 0;
+		if(src->curpos == INIT_SRC_POS)
+		{
+			src->curpos  = -1;
+		}
+		else
+		{
+			c1 = src->buffer[src->curpos];
+		}
+		if(++src->curpos >= src->bufsize)
+		{
+			src->curpos = src->bufsize;
+			return EOF;
+		}
+		return src->buffer[src->curpos];
+	}
+	
+	char peek_char(struct source_s *src)
+	{
+		if(!src || !src->buffer)
+		{
+			errno = ENODATA;
+			return ERRCHAR;
+		}
+		long pos = src->curpos;
+		if(pos == INIT_SRC_POS)
+		{
+			pos++;
+		}
+		pos++;
+		if(pos >= src->bufsize)
+		{
+			return EOF;
+		}
+		return src->buffer[pos];
+	}
+	
+	void skip_white_spaces(struct source_s *src)
+	{
+		char c;
+		
+		if(!src || !src->buffer)
+		{
+			return;
+		}
+		while(((c = peek_char(src)) != EOF) && (c == ' ' || c == '\t'))
+		{
+			next_char(src);
+		}
+	}
 
 Функция unget_char() возвращает (или разгружает) последний символ, который мы извлекли из входных данных, обратно к источнику входных данных. Он делает это, просто манипулируя указателями исходной структуры. Вы увидите преимущества этой функции позже в этой серии.
 
@@ -352,177 +352,177 @@ Lookahead (или peek), чтобы проверить следующий сим
 Теперь, когда у нас есть функции нашего сканера, мы будем использовать эти функции для извлечения входных маркеров. Мы начнем с определения новой структуры, которую будем использовать для представления наших токенов.
 Создайте файл scanner.h в исходном каталоге, откройте его и добавьте следующий код:
 
-      #ifndef SCANNER_H
-      #define SCANNER_Hl
-      
-      struct token_s
-      {
-            struct source_s *src;       /* source of input */
-            int    text_len;            /* length of token text */
-            char   *text;               /* token text */
-      };
-      
-      /* the special EOF token, which indicates the end of input */
-      extern struct token_s eof_token;
-      struct token_s *tokenize(struct source_s *src);
-      void free_token(struct token_s *tok);
-      
-      #endif 
-      
+	#ifndef SCANNER_H
+	#define SCANNER_Hl
+	
+	struct token_s
+	{
+		struct source_s *src;       /* source of input */
+		int    text_len;            /* length of token text */
+		char   *text;               /* token text */
+	};
+	
+	/* the special EOF token, which indicates the end of input */
+	extern struct token_s eof_token;
+	struct token_s *tokenize(struct source_s *src);
+	void free_token(struct token_s *tok);
+	
+	#endif 
+	
 Сосредоточившись на определении структуры, наша структура token_s содержит указатель на структуру source_s, которая содержит ваши входные данные. Структура также содержит указатель на текст токена и поле, которое сообщает нам длину этого текста (так что нам не нужно повторно вызывать strlen() для текста токена).
 
 Далее мы напишем функцию tokenize (), которая будет извлекать следующий токен из входных данных. Мы также напишем некоторые вспомогательные функции, которые помогут нам работать с входными токенами.
 
 В исходном каталоге, создайте файл под названием сканер.C и введите следующий код:
 
-      #include <stdlib.h>
-      #include <stdio.h>
-      #include <string.h>
-      #include <errno.h>
-      #include "shell.h"
-      #include "scanner.h"
-      #include "source.h"
-      
-      char *tok_buf = NULL;
-      int   tok_bufsize  = 0;
-      int   tok_bufindex = -1;
-      
-      /* special token to indicate end of input */
-      struct token_s eof_token = 
-      {
-            .text_len = 0,
-      };
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <string.h>
+	#include <errno.h>
+	#include "shell.h"
+	#include "scanner.h"
+	#include "source.h"
+	
+	char *tok_buf = NULL;
+	int   tok_bufsize  = 0;
+	int   tok_bufindex = -1;
+	
+	/* special token to indicate end of input */
+	struct token_s eof_token = 
+	{
+		.text_len = 0,
+	};
  
-      void add_to_buf(char c)
-      {
-            tok_buf[tok_bufindex++] = c;
-            if(tok_bufindex >= tok_bufsize)
-            {
-                  char *tmp = realloc(tok_buf, tok_bufsize*2);
-                  if(!tmp)
-                  {
-                        errno = ENOMEM;
-                        return;
-                  }
-                  tok_buf = tmp;
-                  tok_bufsize *= 2;
-            }
-      }
-      
-      struct token_s *create_token(char *str)
-      {
-            struct token_s *tok = malloc(sizeof(struct token_s));
+	void add_to_buf(char c)
+	{
+		tok_buf[tok_bufindex++] = c;
+		if(tok_bufindex >= tok_bufsize)
+		{
+			char *tmp = realloc(tok_buf, tok_bufsize*2);
+			if(!tmp)
+			{
+				errno = ENOMEM;
+				return;
+			}
+			tok_buf = tmp;
+			tok_bufsize *= 2;
+		}
+	}
+	
+	struct token_s *create_token(char *str)
+	{
+		struct token_s *tok = malloc(sizeof(struct token_s));
     
-            if(!tok)
-            {
-                  return NULL;
-            }
-            memset(tok, 0, sizeof(struct token_s));
-            tok->text_len = strlen(str);
+		if(!tok)
+		{
+			return NULL;
+		}
+		memset(tok, 0, sizeof(struct token_s));
+		tok->text_len = strlen(str);
     
-            char *nstr = malloc(tok->text_len+1);
+		char *nstr = malloc(tok->text_len+1);
     
-            if(!nstr)
-            {
-                  free(tok);
-                  return NULL;
-            }
+		if(!nstr)
+		{
+			free(tok);
+			return NULL;
+		}
     
-            strcpy(nstr, str);
-            tok->text = nstr;
+		strcpy(nstr, str);
+		tok->text = nstr;
     
-            return tok;
-      }
-      
-      void free_token(struct token_s *tok)
-      {
-            if(tok->text)
-            {
-                  free(tok->text);
-            }
-            free(tok);
-      }
-      
-      struct token_s *tokenize(struct source_s *src)
-      {
-            int  endloop = 0;
-            if(!src || !src->buffer || !src->bufsize)
-            {
-                  errno = ENODATA;
-                  return &eof_token;
-            }
+		return tok;
+	}
+	
+	void free_token(struct token_s *tok)
+	{
+		if(tok->text)
+		{
+			free(tok->text);
+		}
+		free(tok);
+	}
+	
+	struct token_s *tokenize(struct source_s *src)
+	{
+		int  endloop = 0;
+		if(!src || !src->buffer || !src->bufsize)
+		{
+			errno = ENODATA;
+			return &eof_token;
+		}
     
-            if(!tok_buf)
-            {
-                  tok_bufsize = 1024;
-                  tok_buf = malloc(tok_bufsize);
-                  if(!tok_buf)
-                  {
-                        errno = ENOMEM;
-                        return &eof_token;
-                  }
-            }
-            tok_bufindex     = 0;
-            tok_buf[0]       = '\0';
-            char nc = next_char(src);
-            if(nc == ERRCHAR || nc == EOF)
-            {
-                  return &eof_token;
-            }
-            do
-            {
-                  switch(nc)
-                  {
-                        case ' ':
-                        
-                        case '\t':
-                              if(tok_bufindex > 0)
-                              {
-                                    endloop = 1;
-                              }
-                              break;
-                
-                        case '\n':
-                              if(tok_bufindex > 0)
-                              {
-                                    unget_char(src);
-                              }
-                              else
-                              {
-                                    add_to_buf(nc);
-                              }
-                              endloop = 1;
-                              break;
-                
-                        default:
-                              add_to_buf(nc);
-                              break;
-                  }
-                  if(endloop)
-                  {
-                        break;
-                  }
-            } while((nc = next_char(src)) != EOF);
-            if(tok_bufindex == 0)
-            {
-                  return &eof_token;
-            }
+		if(!tok_buf)
+		{
+			tok_bufsize = 1024;
+			tok_buf = malloc(tok_bufsize);
+			if(!tok_buf)
+			{
+				errno = ENOMEM;
+				return &eof_token;
+			}
+		}
+		tok_bufindex     = 0;
+		tok_buf[0]       = '\0';
+		char nc = next_char(src);
+		if(nc == ERRCHAR || nc == EOF)
+		{
+			return &eof_token;
+		}
+		do
+		{
+			switch(nc)
+			{
+				case ' ':
+				
+				case '\t':
+					if(tok_bufindex > 0)
+					{
+						endloop = 1;
+					}
+					break;
+		    
+				case '\n':
+					if(tok_bufindex > 0)
+					{
+						unget_char(src);
+					}
+					else
+					{
+						add_to_buf(nc);
+					}
+					endloop = 1;
+					break;
+		    
+				default:
+					add_to_buf(nc);
+					break;
+			}
+			if(endloop)
+			{
+				break;
+			}
+		} while((nc = next_char(src)) != EOF);
+		if(tok_bufindex == 0)
+		{
+			return &eof_token;
+		}
     
-            if(tok_bufindex >= tok_bufsize)
-            {
-                  tok_bufindex--;
-            }
-            tok_buf[tok_bufindex] = '\0';
-            struct token_s *tok = create_token(tok_buf);
-            if(!tok)
-            {
-                  fprintf(stderr, "error: failed to alloc buffer: %s\n",
-                        strerror(errno));
-                  return &eof_token;
-            } 
-            tok->src = src;
-            return tok;
-      }
+		if(tok_bufindex >= tok_bufsize)
+		{
+			tok_bufindex--;
+		}
+		tok_buf[tok_bufindex] = '\0';
+		struct token_s *tok = create_token(tok_buf);
+		if(!tok)
+		{
+			fprintf(stderr, "error: failed to alloc buffer: %s\n",
+				strerror(errno));
+			return &eof_token;
+		} 
+		tok->src = src;
+		return tok;
+	}
 
 Глобальные переменные, которые мы определили в этом файле, служат следующим целям:
 
@@ -557,63 +557,63 @@ eof_token-это специальный токен, который мы буде
 
 Итак, давайте начнем кодировать наш парсер. Вы можете начать с создания файла parser.h в исходном каталоге, в который вы добавите следующий код:
 
-      #ifndef PARSER_H
-      #define PARSER_H
+	#ifndef PARSER_H
+	#define PARSER_H
 
-      #include "scanner.h"    /* struct token_s */
-      #include "source.h"     /* struct source_s */
+	#include "scanner.h"    /* struct token_s */
+	#include "source.h"     /* struct source_s */
 
-      struct node_s *parse_simple_command(struct token_s *tok);
+	struct node_s *parse_simple_command(struct token_s *tok);
 
-      #endif
+	#endif
 
 Ничего особенного, просто объявляем нашу единственную функцию парсера.
 
 Затем создайте parser.c и добавьте к нему следующий код:
 
-      #include <unistd.h>
-      #include "shell.h"
-      #include "parser.h"
-      #include "scanner.h"
-      #include "node.h"
-      #include "source.h"
+	#include <unistd.h>
+	#include "shell.h"
+	#include "parser.h"
+	#include "scanner.h"
+	#include "node.h"
+	#include "source.h"
 
-      struct node_s *parse_simple_command(struct token_s *tok)
-      {
-            if(!tok)
-            {
-                  return NULL;
-            }
-            
-            struct node_s *cmd = new_node(NODE_COMMAND);
-            if(!cmd)
-            {
-                  free_token(tok);
-                  return NULL;
-            }
-            
-            struct source_s *src = tok->src;
-            
-            do
-            {
-                  if(tok->text[0] == '\n')
-                  {
-                        free_token(tok);
-                        break;
-                  }
-                  struct node_s *word = new_node(NODE_VAR);
-                  if(!word)
-                  {
-                        free_node_tree(cmd);
-                        free_token(tok);
-                        return NULL;
-                  }
-                  set_node_val_str(word, tok->text);
-                  add_child_node(cmd, word);
-                  free_token(tok);
-            } while((tok = tokenize(src)) != &eof_token);
-            return cmd;
-      }
+	struct node_s *parse_simple_command(struct token_s *tok)
+	{
+		if(!tok)
+		{
+			return NULL;
+		}
+		
+		struct node_s *cmd = new_node(NODE_COMMAND);
+		if(!cmd)
+		{
+			free_token(tok);
+			return NULL;
+		}
+		
+		struct source_s *src = tok->src;
+		
+		do
+		{
+			if(tok->text[0] == '\n')
+			{
+				free_token(tok);
+				break;
+			}
+			struct node_s *word = new_node(NODE_VAR);
+			if(!word)
+			{
+				free_node_tree(cmd);
+				free_token(tok);
+				return NULL;
+			}
+			set_node_val_str(word, tok->text);
+			add_child_node(cmd, word);
+			free_token(tok);
+		} while((tok = tokenize(src)) != &eof_token);
+		return cmd;
+	}
 
 Довольно просто, правда? Чтобы разобрать простую команду, нам нужно только вызвать tokenize() для извлечения входных токенов, один за другим, пока мы не получим токен новой строки (который мы тестируем в строке, которая гласит: if(tok->text[0] == '\n')), или мы достигнем конца нашего ввода (мы знаем, что это произошло, когда мы получили токен eof_token. См. условное выражение цикла в нижней части предыдущего списка). Мы используем входные маркеры для создания AST, который представляет собой древовидную структуру, содержащую информацию о компонентах команды. Деталей должно быть достаточно, чтобы исполнитель мог правильно выполнить команду. 
 
@@ -621,59 +621,59 @@ eof_token-это специальный токен, который мы буде
 
 Идти вперед и создать новый файл, узел.H и добавьте в него следующий код:
 
-      #ifndef NODE_H
-      #define NODE_H
+	#ifndef NODE_H
+	#define NODE_H
 
-      enum node_type_e
-      {
-            NODE_COMMAND,           /* simple command */
-            NODE_VAR,               /* variable name (or simply, a word) */
-      };
+	enum node_type_e
+	{
+		NODE_COMMAND,           /* simple command */
+		NODE_VAR,               /* variable name (or simply, a word) */
+	};
 
-      enum val_type_e
-      {
-            VAL_SINT = 1,       /* signed int */
-            VAL_UINT,           /* unsigned int */
-            VAL_SLLONG,         /* signed long long */
-            VAL_ULLONG,         /* unsigned long long */
-            VAL_FLOAT,          /* floating point */
-            VAL_LDOUBLE,        /* long double */
-            VAL_CHR,            /* char */
-            VAL_STR,            /* str (char pointer) */
-      };
+	enum val_type_e
+	{
+		VAL_SINT = 1,       /* signed int */
+		VAL_UINT,           /* unsigned int */
+		VAL_SLLONG,         /* signed long long */
+		VAL_ULLONG,         /* unsigned long long */
+		VAL_FLOAT,          /* floating point */
+		VAL_LDOUBLE,        /* long double */
+		VAL_CHR,            /* char */
+		VAL_STR,            /* str (char pointer) */
+	};
 
-      union symval_u
-      {
-            long               sint;
-            unsigned long      uint;
-            long long          sllong;
-            unsigned long long ullong;
-            double             sfloat;
-            long double        ldouble;
-            char               chr;
-            char              *str;
-      };
-      
-      struct node_s
-      {
-            enum   node_type_e type;    /* type of this node */
-            enum   val_type_e val_type; /* type of this node's val field */
-            union  symval_u val;        /* value of this node */
-            int    children;            /* number of child nodes */
-            struct node_s *first_child; /* first child node */
-            struct node_s *next_sibling, *prev_sibling;
-                                          /*
-                                          * if this is a child node, keep
-                                          * pointers to prev/next siblings
-                                          */
-      };
+	union symval_u
+	{
+		long               sint;
+		unsigned long      uint;
+		long long          sllong;
+		unsigned long long ullong;
+		double             sfloat;
+		long double        ldouble;
+		char               chr;
+		char              *str;
+	};
+	
+	struct node_s
+	{
+		enum   node_type_e type;    /* type of this node */
+		enum   val_type_e val_type; /* type of this node's val field */
+		union  symval_u val;        /* value of this node */
+		int    children;            /* number of child nodes */
+		struct node_s *first_child; /* first child node */
+		struct node_s *next_sibling, *prev_sibling;
+							/*
+							* if this is a child node, keep
+							* pointers to prev/next siblings
+							*/
+	};
 
-      struct  node_s *new_node(enum node_type_e type);
-      void    add_child_node(struct node_s *parent, struct node_s *child);
-      void    free_node_tree(struct node_s *node);
-      void    set_node_val_str(struct node_s *node, char *val);
+	struct  node_s *new_node(enum node_type_e type);
+	void    add_child_node(struct node_s *parent, struct node_s *child);
+	void    free_node_tree(struct node_s *node);
+	void    set_node_val_str(struct node_s *node, char *val);
 
-      #endif
+	#endif
 
 Перечисление node_type_e определяет типы наших узлов AST. На данный момент нам нужны только два типа. Первый тип представляет корневой узел AST простой команды, в то время как второй тип представляет дочерние узлы простой команды (которые содержат имя команды и аргументы). В следующих частях этого руководства мы добавим в это перечисление дополнительные типы узлов.
 
@@ -695,101 +695,101 @@ val.str => указатель на строковое значение
 
 Создайте файл с именем node.c и добавьте следующий код:
 
-      #include <stdlib.h>
-      #include <string.h>
-      #include <stdio.h>
-      #include <errno.h>
-      #include "shell.h"
-      #include "node.h"
-      #include "parser.h"
+	#include <stdlib.h>
+	#include <string.h>
+	#include <stdio.h>
+	#include <errno.h>
+	#include "shell.h"
+	#include "node.h"
+	#include "parser.h"
 
-      struct node_s *new_node(enum node_type_e type)
-      {
-            struct node_s *node = malloc(sizeof(struct node_s));
+	struct node_s *new_node(enum node_type_e type)
+	{
+		struct node_s *node = malloc(sizeof(struct node_s));
 
-            if(!node)
-            {
-                  return NULL;
-            }
-            
-            memset(node, 0, sizeof(struct node_s));
-            node->type = type;
-            
-            return node;
-      }
+		if(!node)
+		{
+			return NULL;
+		}
+		
+		memset(node, 0, sizeof(struct node_s));
+		node->type = type;
+		
+		return node;
+	}
 
-      void add_child_node(struct node_s *parent, struct node_s *child)
-      {
-            if(!parent || !child)
-            {
-                  return;
-            }
-            if(!parent->first_child)
-            {
-                  parent->first_child = child;
-            }
-            else
-            {
-                  struct node_s *sibling = parent->first_child;
-            
-                  while(sibling->next_sibling)
-                  {
-                        sibling = sibling->next_sibling;
-                  }
-            
-                  sibling->next_sibling = child;
-                  child->prev_sibling = sibling;
-            }
-            parent->children++;
-      }
+	void add_child_node(struct node_s *parent, struct node_s *child)
+	{
+		if(!parent || !child)
+		{
+			return;
+		}
+		if(!parent->first_child)
+		{
+			parent->first_child = child;
+		}
+		else
+		{
+			struct node_s *sibling = parent->first_child;
+		
+			while(sibling->next_sibling)
+			{
+				sibling = sibling->next_sibling;
+			}
+		
+			sibling->next_sibling = child;
+			child->prev_sibling = sibling;
+		}
+		parent->children++;
+	}
 
-      void set_node_val_str(struct node_s *node, char *val)
-      {
-            node->val_type = VAL_STR;
-            if(!val)
-            {
-                  node->val.str = NULL;
-            }
-            else
-            {
-                  char *val2 = malloc(strlen(val)+1);
-            
-                  if(!val2)
-                  {
-                        node->val.str = NULL;
-                  }
-                  else
-                  {
-                        strcpy(val2, val);
-                        node->val.str = val2;
-                  }
-            }
-      }
+	void set_node_val_str(struct node_s *node, char *val)
+	{
+		node->val_type = VAL_STR;
+		if(!val)
+		{
+			node->val.str = NULL;
+		}
+		else
+		{
+			char *val2 = malloc(strlen(val)+1);
+		
+			if(!val2)
+			{
+				node->val.str = NULL;
+			}
+			else
+			{
+				strcpy(val2, val);
+				node->val.str = val2;
+			}
+		}
+	}
 
-      void free_node_tree(struct node_s *node)
-      {
-            if(!node)
-            {
-                  return;
-            }
-            struct node_s *child = node->first_child;
-            
-            while(child)
-            {
-                  struct node_s *next = child->next_sibling;
-                  free_node_tree(child);
-                  child = next;
-            }
-            
-            if(node->val_type == VAL_STR)
-            {
-                  if(node->val.str)
-                  {
-                        free(node->val.str);
-                  }
-            }
-            free(node);
-      } 
+	void free_node_tree(struct node_s *node)
+	{
+		if(!node)
+		{
+			return;
+		}
+		struct node_s *child = node->first_child;
+		
+		while(child)
+		{
+			struct node_s *next = child->next_sibling;
+			free_node_tree(child);
+			child = next;
+		}
+		
+		if(node->val_type == VAL_STR)
+		{
+			if(node->val.str)
+			{
+				free(node->val.str);
+			}
+		}
+		free(node);
+	} 
 
 Функция new_node() создает новый узел и задает его поле типа.
 
@@ -800,8 +800,200 @@ val.str => указатель на строковое значение
 Функция free_node_tree() освобождает память, используемую узловой структурой. Если у узла есть дочерние элементы, функция вызывается рекурсивно, чтобы освободить каждый из них.
 
 Это все для парсера. Теперь давайте напишем нашу команду executor.
+
 # Выполнение Простых Команд
 
 Подобно нашему синтаксическому анализатору, исполнитель будет содержать только одну функцию do_simple_command(). В следующих частях этого урока мы добавим дополнительные функции, которые позволят нам выполнять все виды команд, такие как циклы и условные выражения.
 
 Создайте файл с именем executor.h и добавьте следующий код:
+
+	#ifndef BACKEND_H
+	#define BACKEND_H
+
+	#include "node.h"
+
+	char *search_path(char *file);
+	int do_exec_cmd(int argc, char **argv);
+	int do_simple_command(struct node_s *node);
+
+	#endif
+
+Просто некоторые прототипы функций. Теперь создайте executor.c и определите следующие функции:
+
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <unistd.h>
+	#include <string.h>
+	#include <errno.h>
+	#include <sys/stat.h>
+	#include <sys/wait.h>
+	#include "shell.h"
+	#include "node.h"
+	#include "executor.h"
+	
+	char *search_path(char *file)
+	{
+		char *PATH = getenv("PATH");
+		char *p    = PATH;
+		char *p2;
+		
+		while(p && *p)
+		{
+			p2 = p;
+			while(*p2 && *p2 != ':')
+			{
+				p2++;
+			}
+			
+			int  plen = p2-p;
+			if(!plen)
+			{
+				plen = 1;
+			}
+			
+			int  alen = strlen(file);
+			char path[plen+1+alen+1];
+			
+			strncpy(path, p, p2-p);
+			path[p2-p] = '\0';
+			
+			if(p2[-1] != '/')
+			{
+				strcat(path, "/");
+			}
+			strcat(path, file);
+			
+			struct stat st;
+			if(stat(path, &st) == 0)
+			{
+				if(!S_ISREG(st.st_mode))
+				{
+				errno = ENOENT;
+				p = p2;
+				if(*p2 == ':')
+				{
+					p++;
+				}
+				continue;
+				}
+				p = malloc(strlen(path)+1);
+				if(!p)
+				{
+				return NULL;
+				}
+				
+			strcpy(p, path);
+				return p;
+			}
+			else    /* file not found */
+			{
+				p = p2;
+				if(*p2 == ':')
+				{
+				p++;
+				}
+			}
+		}
+		errno = ENOENT;
+		return NULL;
+	}
+	int do_exec_cmd(int argc, char **argv)
+	{
+		if(strchr(argv[0], '/'))
+		{
+			execv(argv[0], argv);
+		}
+		else
+		{
+			char *path = search_path(argv[0]);
+			if(!path)
+			{
+				return 0;
+			}
+			execv(path, argv);
+			free(path);
+		}
+		return 0;
+	}
+
+	static inline void free_argv(int argc, char **argv)
+	{
+		if(!argc)
+		{
+			return;
+		}
+		while(argc--)
+		{
+			free(argv[argc]);
+		}
+	}
+
+	int do_simple_command(struct node_s *node)
+	{
+		if(!node)
+		{
+			return 0;
+		}
+		struct node_s *child = node->first_child;
+		if(!child)
+		{
+			return 0;
+		}
+		
+		int argc = 0;
+		long max_args = 255;
+		char *argv[max_args+1];/* keep 1 for the terminating NULL arg */
+		char *str;
+		
+		while(child)
+		{
+			str = child->val.str;
+			argv[argc] = malloc(strlen(str)+1);
+			
+			if(!argv[argc])
+			{
+				free_argv(argc, argv);
+				return 0;
+			}
+			
+			strcpy(argv[argc], str);
+			if(++argc >= max_args)
+			{
+				break;
+			}
+			child = child->next_sibling;
+		}
+		argv[argc] = NULL;
+		pid_t child_pid = 0;
+		if((child_pid = fork()) == 0)
+		{
+			do_exec_cmd(argc, argv);
+			fprintf(stderr, "error: failed to execute command: %s\n", 
+				strerror(errno));
+			if(errno == ENOEXEC)
+			{
+				exit(126);
+			}
+			else if(errno == ENOENT)
+			{
+				exit(127);
+			}
+			else
+			{
+				exit(EXIT_FAILURE);
+			}
+		}
+		else if(child_pid < 0)
+		{
+			fprintf(stderr, "error: failed to fork command: %s\n", 
+				strerror(errno));
+			return 0;
+		}
+		int status = 0;
+		waitpid(child_pid, &status, 0);
+		free_argv(argc, argv);
+		
+		return 1;
+	}
+
+	
