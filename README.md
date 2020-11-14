@@ -567,3 +567,241 @@ eof_token-это специальный токен, который мы буде
 
       #endif
 
+Ничего особенного, просто объявляем нашу единственную функцию парсера.
+
+Затем создайте parser.c и добавьте к нему следующий код:
+
+      #include <unistd.h>
+      #include "shell.h"
+      #include "parser.h"
+      #include "scanner.h"
+      #include "node.h"
+      #include "source.h"
+
+      struct node_s *parse_simple_command(struct token_s *tok)
+      {
+            if(!tok)
+            {
+                  return NULL;
+            }
+            
+            struct node_s *cmd = new_node(NODE_COMMAND);
+            if(!cmd)
+            {
+                  free_token(tok);
+                  return NULL;
+            }
+            
+            struct source_s *src = tok->src;
+            
+            do
+            {
+                  if(tok->text[0] == '\n')
+                  {
+                        free_token(tok);
+                        break;
+                  }
+                  struct node_s *word = new_node(NODE_VAR);
+                  if(!word)
+                  {
+                        free_node_tree(cmd);
+                        free_token(tok);
+                        return NULL;
+                  }
+                  set_node_val_str(word, tok->text);
+                  add_child_node(cmd, word);
+                  free_token(tok);
+            } while((tok = tokenize(src)) != &eof_token);
+            return cmd;
+      }
+
+Довольно просто, правда? Чтобы разобрать простую команду, нам нужно только вызвать tokenize() для извлечения входных токенов, один за другим, пока мы не получим токен новой строки (который мы тестируем в строке, которая гласит: if(tok->text[0] == '\n')), или мы достигнем конца нашего ввода (мы знаем, что это произошло, когда мы получили токен eof_token. См. условное выражение цикла в нижней части предыдущего списка). Мы используем входные маркеры для создания AST, который представляет собой древовидную структуру, содержащую информацию о компонентах команды. Деталей должно быть достаточно, чтобы исполнитель мог правильно выполнить команду. 
+
+Каждый узел в AST команды должен содержать информацию о входном токене, который он представляет (например, текст исходного токена). Узел также должен содержать указатели на его дочерние узлы (если узел является корневым узлом), а также на его родственные узлы (если узел является дочерним узлом). Поэтому нам нужно будет определить еще одну структуру, struct node_s, которую мы будем использовать для представления узлов в нашем AST.
+
+Идти вперед и создать новый файл, узел.H и добавьте в него следующий код:
+
+      #ifndef NODE_H
+      #define NODE_H
+
+      enum node_type_e
+      {
+            NODE_COMMAND,           /* simple command */
+            NODE_VAR,               /* variable name (or simply, a word) */
+      };
+
+      enum val_type_e
+      {
+            VAL_SINT = 1,       /* signed int */
+            VAL_UINT,           /* unsigned int */
+            VAL_SLLONG,         /* signed long long */
+            VAL_ULLONG,         /* unsigned long long */
+            VAL_FLOAT,          /* floating point */
+            VAL_LDOUBLE,        /* long double */
+            VAL_CHR,            /* char */
+            VAL_STR,            /* str (char pointer) */
+      };
+
+      union symval_u
+      {
+            long               sint;
+            unsigned long      uint;
+            long long          sllong;
+            unsigned long long ullong;
+            double             sfloat;
+            long double        ldouble;
+            char               chr;
+            char              *str;
+      };
+      
+      struct node_s
+      {
+            enum   node_type_e type;    /* type of this node */
+            enum   val_type_e val_type; /* type of this node's val field */
+            union  symval_u val;        /* value of this node */
+            int    children;            /* number of child nodes */
+            struct node_s *first_child; /* first child node */
+            struct node_s *next_sibling, *prev_sibling;
+                                          /*
+                                          * if this is a child node, keep
+                                          * pointers to prev/next siblings
+                                          */
+      };
+
+      struct  node_s *new_node(enum node_type_e type);
+      void    add_child_node(struct node_s *parent, struct node_s *child);
+      void    free_node_tree(struct node_s *node);
+      void    set_node_val_str(struct node_s *node, char *val);
+
+      #endif
+
+Перечисление node_type_e определяет типы наших узлов AST. На данный момент нам нужны только два типа. Первый тип представляет корневой узел AST простой команды, в то время как второй тип представляет дочерние узлы простой команды (которые содержат имя команды и аргументы). В следующих частях этого руководства мы добавим в это перечисление дополнительные типы узлов.
+
+Перечисление val_type_e представляет типы значений, которые мы можем хранить в данной структуре узлов. Для простых команд мы будем использовать только строки (тип перечисления VAL_STR). Позже в этой серии мы будем использовать другие типы при обработке других типов сложных команд.
+
+Объединение symval_u представляет значение, которое мы можем хранить в данной узловой структуре. Каждый узел может иметь только один тип значения, например символьную строку или числовое значение. Мы получаем доступ к значению узла, ссылаясь на соответствующий член объединения (sint для длинных целых чисел со знаком, str для строк и т. д.).
+
+Структура struct node_s представляет собой узел AST. Он содержит поля, которые сообщают нам о типе узла, типе значения узла, а также само значение. Если это корневой узел, то поле children содержит количество дочерних узлов, а first_child указывает на первый дочерний узел (в противном случае оно будет равно NULL). Если это дочерний узел, мы можем обойти узлы AST, следуя указателям next_sibling и prev_sibling.
+
+Если мы хотим получить значение узла, нам нужно проверить поле val_type и, в соответствии с тем, что мы там находим, получить доступ к соответствующему члену поля val. Для простых команд все узлы будут иметь следующие атрибуты:
+
+type => NODE_COMMAND (корневой узел) или NODE_VAR (имя команды и список аргументов)
+
+val_type => VAL_STR
+
+val.str => указатель на строковое значение
+
+Теперь давайте напишем некоторые функции, которые помогут нам работать со структурами узлов.
+
+Создайте файл с именем node.c и добавьте следующий код:
+
+      #include <stdlib.h>
+      #include <string.h>
+      #include <stdio.h>
+      #include <errno.h>
+      #include "shell.h"
+      #include "node.h"
+      #include "parser.h"
+
+      struct node_s *new_node(enum node_type_e type)
+      {
+            struct node_s *node = malloc(sizeof(struct node_s));
+
+            if(!node)
+            {
+                  return NULL;
+            }
+            
+            memset(node, 0, sizeof(struct node_s));
+            node->type = type;
+            
+            return node;
+      }
+
+      void add_child_node(struct node_s *parent, struct node_s *child)
+      {
+            if(!parent || !child)
+            {
+                  return;
+            }
+            if(!parent->first_child)
+            {
+                  parent->first_child = child;
+            }
+            else
+            {
+                  struct node_s *sibling = parent->first_child;
+            
+                  while(sibling->next_sibling)
+                  {
+                        sibling = sibling->next_sibling;
+                  }
+            
+                  sibling->next_sibling = child;
+                  child->prev_sibling = sibling;
+            }
+            parent->children++;
+      }
+
+      void set_node_val_str(struct node_s *node, char *val)
+      {
+            node->val_type = VAL_STR;
+            if(!val)
+            {
+                  node->val.str = NULL;
+            }
+            else
+            {
+                  char *val2 = malloc(strlen(val)+1);
+            
+                  if(!val2)
+                  {
+                        node->val.str = NULL;
+                  }
+                  else
+                  {
+                        strcpy(val2, val);
+                        node->val.str = val2;
+                  }
+            }
+      }
+
+      void free_node_tree(struct node_s *node)
+      {
+            if(!node)
+            {
+                  return;
+            }
+            struct node_s *child = node->first_child;
+            
+            while(child)
+            {
+                  struct node_s *next = child->next_sibling;
+                  free_node_tree(child);
+                  child = next;
+            }
+            
+            if(node->val_type == VAL_STR)
+            {
+                  if(node->val.str)
+                  {
+                        free(node->val.str);
+                  }
+            }
+            free(node);
+      } 
+
+Функция new_node() создает новый узел и задает его поле типа.
+
+Функция add_child_node() расширяет AST простой команды, добавляя новый дочерний узел и увеличивая поле дочерних узлов корневого узла. Если корневой узел не имеет дочерних элементов, то новый дочерний элемент назначается полю first_child корневого узла. В противном случае ребенок добавляется в конец списка детей.
+
+Функция set_node_val_str() устанавливает значение узла в заданную строку. Он копирует строку во вновь выделенное пространство памяти, а затем устанавливает поля val_type и val.str соответственно. В будущем мы определим аналогичные функции, позволяющие устанавливать значения узлов для различных типов данных, таких как целые числа и плавающие точки.
+
+Функция free_node_tree() освобождает память, используемую узловой структурой. Если у узла есть дочерние элементы, функция вызывается рекурсивно, чтобы освободить каждый из них.
+
+Это все для парсера. Теперь давайте напишем нашу команду executor.
+# Выполнение Простых Команд
+
+Подобно нашему синтаксическому анализатору, исполнитель будет содержать только одну функцию do_simple_command(). В следующих частях этого урока мы добавим дополнительные функции, которые позволят нам выполнять все виды команд, такие как циклы и условные выражения.
+
+Создайте файл с именем executor.h и добавьте следующий код:
