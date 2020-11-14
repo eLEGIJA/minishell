@@ -1198,3 +1198,125 @@ global_symtab, local_symtab => указатели на глобальные и �
 		symtab_stack.symtab_list[0] = global_symtab;
 		global_symtab->level        = 0;
 	}
+
+Во-первых, у нас есть две глобальные переменные:
+
+symtab_stack => указатель на наш стек таблиц символов (нам нужен только один стек на оболочку).
+
+symtab_level => наш текущий уровень в стеке (0, если мы работаем с глобальной таблицей символов, в противном случае ненулевой).
+
+Функция init_symtab() инициализирует наш стек таблиц символов, затем выделяет память для нашей глобальной таблицы символов и инициализирует ее.
+
+Затем добавьте следующую функцию:
+
+	struct symtab_s *new_symtab(int level)
+	{
+		struct symtab_s *symtab = malloc(sizeof(struct symtab_s));
+		if(!symtab)
+		{
+			fprintf(stderr, "fatal error: no memory for new symbol table\n");
+			exit(EXIT_FAILURE);
+		}
+		memset(symtab, 0, sizeof(struct symtab_s));
+		symtab->level = level;
+		return symtab;
+	}
+
+Мы будем вызывать функцию new_symtab() всякий раз, когда мы хотим создать новую таблицу символов (например, когда мы собираемся выполнить функцию оболочки).
+
+Затем добавьте следующую функцию:
+
+	void free_symtab(struct symtab_s *symtab)
+	{
+		if(symtab == NULL)
+		{
+			return;
+		}
+		struct symtab_entry_s *entry = symtab->first;
+		while(entry)
+		{
+			if(entry->name)
+			{
+				free(entry->name);
+			}
+			if(entry->val)
+			{
+				free(entry->val);
+			}
+			if(entry->func_body)
+			{
+				free_node_tree(entry->func_body);
+			}
+			struct symtab_entry_s *next = entry->next;
+			free(entry);
+			entry = next;
+		}
+		free(symtab);
+	}
+
+Мы вызовем функцию free_symtab (), когда закончим работу с таблицей символов, и мы хотим освободить память, используемую таблицей символов и ее записями.
+
+Далее мы определим функцию отладки:
+
+	void dump_local_symtab(void)
+	{
+		struct symtab_s *symtab = symtab_stack.local_symtab;
+		int i = 0;
+		int indent = symtab->level * 4;
+		fprintf(stderr, "%*sSymbol table [Level %d]:\r\n", indent, " ", symtab->level);
+		fprintf(stderr, "%*s===========================\r\n", indent, " ");
+		fprintf(stderr, "%*s  No               Symbol                    Val\r\n", indent, " ");
+		fprintf(stderr, "%*s------ -------------------------------- ------------\r\n", indent, " ");
+		struct symtab_entry_s *entry = symtab->first;
+		while(entry)
+		{
+			fprintf(stderr, "%*s[%04d] %-32s '%s'\r\n", indent, " ",
+					i++, entry->name, entry->val);
+			entry = entry->next;
+		}
+		fprintf(stderr, "%*s------ -------------------------------- ------------\r\n", indent, " ");
+	}
+
+Эта функция выводит содержимое локальной таблицы символов. Когда наша оболочка запускается, локальные и глобальные таблицы символов будут ссылаться на одну и ту же таблицу. Только когда оболочка собирается запустить функцию оболочки или файл сценария, у нас есть локальная таблица, которая отличается от глобальной таблицы. (позже в этом уроке мы напишем встроенную утилиту, которая вызовет dump_local_symtab (), чтобы помочь нам визуализировать содержимое глобальной таблицы символов нашей оболочки).
+
+Теперь давайте определим некоторые функции, которые помогут нам работать с записями таблицы символов. В том же файле (symtab.c) добавьте следующую функцию:
+
+	struct symtab_entry_s *add_to_symtab(char *symbol)
+	{
+		if(!symbol || symbol[0] == '\0')
+		{
+			return NULL;
+		}
+		struct symtab_s *st = symtab_stack.local_symtab;
+		struct symtab_entry_s *entry = NULL;
+		if((entry = do_lookup(symbol, st)))
+		{
+			return entry;
+		}
+		entry = malloc(sizeof(struct symtab_entry_s));
+		if(!entry)
+		{
+			fprintf(stderr, "fatal error: no memory for new symbol table entry\n");
+			exit(EXIT_FAILURE);
+		}
+		memset(entry, 0, sizeof(struct symtab_entry_s));
+		entry->name = malloc(strlen(symbol)+1);
+		if(!entry->name)
+		{
+			fprintf(stderr, "fatal error: no memory for new symbol table entry\n");
+			exit(EXIT_FAILURE);
+		}
+		strcpy(entry->name, symbol);
+		if(!st->first)
+		{
+			st->first      = entry;
+			st->last       = entry;
+		}
+		else
+		{
+			st->last->next = entry;
+			st->last       = entry;
+		}
+		return entry;
+	}
+
