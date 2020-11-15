@@ -101,57 +101,57 @@
 
 	char *read_cmd(void)
 	{
-	   char buf[1024];
-	   char *ptr = NULL;
-	   char ptrlen = 0;
+		char buf[1024];
+		char *ptr = NULL;
+		char ptrlen = 0;
 
-	   while(fgets(buf, 1024, stdin))
-	   {
-		int buflen = strlen(buf);
-
-		if(!ptr)
+		while(fgets(buf, 1024, stdin))
 		{
-		   ptr = malloc(buflen+1);
-		}
-		else
-		{
-		   char *ptr2 = realloc(ptr, ptrlen+buflen+1);
+			int buflen = strlen(buf);
 
-		   if(ptr2)
-		   {
-			ptr = ptr2;
-		   }
-		   else
-		   {
-			free(ptr);
-			ptr = NULL;
-		   }
-		}
+			if(!ptr)
+			{
+				ptr = malloc(buflen+1);
+			}
+			else
+			{
+				char *ptr2 = realloc(ptr, ptrlen+buflen+1);
 
-		if(!ptr)
-		{
-		   fprintf(stderr, "error: failed to alloc buffer: %s\n", strerror(errno));
-		   return NULL;
-		}
+				if(ptr2)
+				{
+					ptr = ptr2;
+				}
+				else
+				{
+					free(ptr);
+					ptr = NULL;
+		   		}
+			}
 
-		strcpy(ptr+ptrlen, buf);
+			if(!ptr)
+			{
+		   		fprintf(stderr, "error: failed to alloc buffer: %s\n", strerror(errno));
+		   		return NULL;
+			}
 
-		if(buf[buflen-1] == '\n')
-		{
-		   if(buflen == 1 || buf[buflen-2] != '\\')
-		   {
-			return ptr;
-		   }
+			strcpy(ptr+ptrlen, buf);
 
-		   ptr[ptrlen+buflen-2] = '\0';
-		   buflen -= 2;
-		   print_prompt2();
-		}
+			if(buf[buflen-1] == '\n')
+			{
+		   		if(buflen == 1 || buf[buflen-2] != '\\')
+		   		{
+					return ptr;
+		   		}
 
-		ptrlen += buflen;
-	   }
+		   		ptr[ptrlen+buflen-2] = '\0';
+		   		buflen -= 2;
+		   		print_prompt2();
+			}
 
-	   return ptr;
+			ptrlen += buflen;
+	   	}
+
+	   	return ptr;
 	}
 
 Здесь мы считываем входные данные из stdin в 1024-байтовых блоках и храним их в буфере. В первый раз, когда мы читаем входные данные (первый фрагмент для текущей команды), мы создаем наш буфер с помощью malloc(). Для последующих фрагментов мы расширяем буфер с помощью функции realloc(). Здесь мы не должны сталкиваться с какими-либо проблемами памяти, но если что-то происходит неправильно, мы печатаем сообщение об ошибке и возвращаем NULL. Если все идет хорошо, мы копируем фрагмент ввода, который только что прочитали от пользователя, в наш буфер и соответствующим образом корректируем наши указатели.
@@ -163,16 +163,16 @@
  Это глупый пример, но он прекрасно демонстрирует то, о чем мы говорим. Чтобы ввести такую длинную команду, мы можем записать все это в одной строке (как мы сделали здесь), что является громоздким и уродливым процессом. Или мы можем нарезать леску на более мелкие кусочки и скормить эти кусочки Shell, по одному кусочку за раз:
  
 	echo "This is a very long line of input, \
-	   one that needs to span two, three, \
-	   or perhaps even more lines of input, \
-	   so that we can feed it to the shell"
+		one that needs to span two, three, \
+		or perhaps even more lines of input, \
+		so that we can feed it to the shell"
 	   
 После ввода первой строки и чтобы оболочка знала, что мы не закончили ввод, мы заканчиваем каждую строку символом обратной косой черты \\, за которым следует новая строка (я также сделал отступы в строках, чтобы сделать их более читабельными). Мы называем это экранированием символа новой строки. Когда оболочка видит экранированную новую строку, она знает, что ей нужно отбросить два символа и продолжить чтение ввода.
 
 Теперь давайте вернемся к нашей функции read_cmd (). Мы обсуждали последний блок кода, который гласит:
 
-	  if(buf[buflen-1] == '\n')
-	  {
+	if(buf[buflen-1] == '\n')
+	{
 		if(buflen == 1 || buf[buflen-2] != '\\')
 		{
 		    return ptr;
@@ -181,7 +181,7 @@
 		ptr[ptrlen+buflen-2] = '\0';
 		buflen -= 2;
 		print_prompt2();
-	  }
+	}
 	  
  Здесь мы проверяем, заканчивается ли входной сигнал, который мы получили в буфере, на \n, и если да, то экранируется ли \n символом обратной косой черты \\. Если последний \n не экранирован, то входная строка завершена, и мы возвращаем ее в функцию main (). В противном случае мы удаляем два символа (\\ и \n), распечатываем PS2 и продолжаем чтение ввода.
  
