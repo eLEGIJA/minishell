@@ -1085,14 +1085,18 @@ val.str => указатель на строковое значение
 
 	#ifndef SYMTAB_H
 	#define SYMTAB_H
+	
 	#include "../node.h"
+	
 	#define MAX_SYMTAB	256
+	
 	/* the type of a symbol table entry's value */
 	enum symbol_type_e
 	{
 		SYM_STR ,
 		SYM_FUNC,
 	};
+	
 	/* the symbol table entry structure */
 	struct symtab_entry_s
 	{
@@ -1103,6 +1107,7 @@ val.str => указатель на строковое значение
 		struct    symtab_entry_s *next;
 		struct    node_s *func_body;
 	};
+	
 	/* the symbol table structure */
 	struct symtab_s
 	{
@@ -1111,6 +1116,7 @@ val.str => указатель на строковое значение
 	};
 	/* values for the flags field of struct symtab_entry_s */                       
 	#define FLAG_EXPORT (1 << 0) /* export entry to forked commands */
+	
 	/* the symbol table stack structure */
 	struct symtab_stack_s
 	{
