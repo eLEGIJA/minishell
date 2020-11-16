@@ -306,24 +306,24 @@ Lookahead (или peek), чтобы проверить следующий сим
 Проанализируйте маркеры и создайте абстрактное синтаксическое дерево, или AST. Часть оболочки, ответственная за это, называется синтаксическим анализатором.
 
 	#ifndef SOURCE_H
-	#define SOURCE_H
-	
-	#define EOF             (-1)
-	#define ERRCHAR         ( 0)
-	#define INIT_SRC_POS    (-2)
-	
-	struct source_s
-	{   
-		char *buffer;       /* the input text */
-		long bufsize;       /* size of the input text */
-		long  curpos;       /* absolute char position in source */
-	};
-	
-	char next_char(struct source_s *src);
-	void unget_char(struct source_s *src);
-	char peek_char(struct source_s *src);
-	void skip_white_spaces(struct source_s *src);
-	
+	# define SOURCE_H
+
+	# define EOF			(-1)
+	# define ERRCHAR		( 0)
+	# define INIT_SRC_POS	(-2)
+
+	struct		s_source
+	{
+		char	*buffer;
+		long	bufsize;
+		long	curpos;
+	}			t_source;
+
+	char	next_char(struct source_s *src);
+	void	unget_char(struct source_s *src);
+	char	peek_char(struct source_s *src);
+	void	skip_white_spaces(struct source_s *src);
+
 	#endif
 	
 Сосредоточившись на определении структуры, вы можете увидеть, что наша структура source_s содержит указатель на входную строку, в дополнение к двум длинным полям, которые содержат информацию о длине строки и нашей текущей позиции в строке (откуда мы получим следующий символ).
