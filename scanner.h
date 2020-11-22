@@ -1,32 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   source.h                                           :+:      :+:    :+:   */
+/*   scanner.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 23:26:25 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/18 20:16:55 by msafflow         ###   ########.fr       */
+/*   Created: 2020/11/17 17:30:15 by msafflow          #+#    #+#             */
+/*   Updated: 2020/11/18 23:37:09 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SOURCE_H
-# define SOURCE_H
+#ifndef SCANNER_H
+# define SCANNER_H
 
-# define EOF			(-1)
-# define ERRCHAR		( 0)
-# define INIT_SRC_POS	(-2)
+# include "source.h"
+# include "node.h"
 
-typedef struct	s_source
+/*
+** source of input
+** length of token text
+** token text
+*/
+
+typedef struct		s_token
 {
-	char		*buffer;
-	long		bufsize;
-	long		curpos;
-}				t_source;
+	struct s_source	*src;
+	int				text_len;
+	char			*text;
+}					t_token;
 
-char			next_char(t_source *src);
-void			unget_char(t_source *src);
-char			peek_char(t_source *src);
-void			skip_white_spaces(t_source *src);
+/*
+** the special EOF token, which indicates the end of input
+*/
+
+extern t_token		g_eof_token;
+t_token				*tokenize(t_source *src);
+void				free_token(t_token *tok);
 
 #endif

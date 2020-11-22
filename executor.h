@@ -1,32 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   source.h                                           :+:      :+:    :+:   */
+/*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 23:26:25 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/18 20:16:55 by msafflow         ###   ########.fr       */
+/*   Created: 2020/11/17 21:08:35 by msafflow          #+#    #+#             */
+/*   Updated: 2020/11/18 23:07:46 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SOURCE_H
-# define SOURCE_H
+#ifndef EXECUTOR_H
+# define EXECUTOR_H
 
-# define EOF			(-1)
-# define ERRCHAR		( 0)
-# define INIT_SRC_POS	(-2)
+# include "node.h"
 
-typedef struct	s_source
-{
-	char		*buffer;
-	long		bufsize;
-	long		curpos;
-}				t_source;
-
-char			next_char(t_source *src);
-void			unget_char(t_source *src);
-char			peek_char(t_source *src);
-void			skip_white_spaces(t_source *src);
+char	*search_path(char *file);
+int		do_exec_cmd(int argc, char **argv);
+int		do_simple_command(t_node *node);
 
 #endif

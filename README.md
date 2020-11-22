@@ -312,17 +312,17 @@ Lookahead (или peek), чтобы проверить следующий сим
 	# define ERRCHAR		( 0)
 	# define INIT_SRC_POS	(-2)
 
-	struct		s_source
+	typedef struct	s_source
 	{
-		char	*buffer;
-		long	bufsize;
-		long	curpos;
-	}			t_source;
+		char		*buffer;
+		long		bufsize;
+		long		curpos;
+	}				t_source;
 
-	char	next_char(struct source_s *src);
-	void	unget_char(struct source_s *src);
-	char	peek_char(struct source_s *src);
-	void	skip_white_spaces(struct source_s *src);
+	char			next_char(struct source_s *src);
+	void			unget_char(struct source_s *src);
+	char			peek_char(struct source_s *src);
+	void			skip_white_spaces(struct source_s *src);
 
 	#endif
 	
@@ -333,73 +333,64 @@ Lookahead (или peek), чтобы проверить следующий сим
 	#include <errno.h>
 	#include "shell.h"
 	#include "source.h"
-	
-	void unget_char(struct source_s *src)
+
+	void	unget_char(t_source *src)
 	{
-		if(src->curpos < 0)
-		{
-			return;
-		}
+		if (src->curpos < 0)
+			return ;
 		src->curpos--;
 	}
-	
-	char next_char(struct source_s *src)
+
+	char	next_char(t_source *src)
 	{
-		if(!src || !src->buffer)
+		char	c1;
+
+		if (!src || !src->buffer)
 		{
 			errno = ENODATA;
-			return ERRCHAR;
+			return (ERRCHAR);
 		}
-		char c1 = 0;
-		if(src->curpos == INIT_SRC_POS)
-		{
-			src->curpos  = -1;
-		}
+		c1 = 0;
+		if (src->curpos == INIT_SRC_POS)
+			src->curpos = -1;
 		else
-		{
 			c1 = src->buffer[src->curpos];
-		}
-		if(++src->curpos >= src->bufsize)
+		if (++src->curpos >= src->bufsize)
 		{
 			src->curpos = src->bufsize;
-			return EOF;
+			return (EOF);
 		}
-		return src->buffer[src->curpos];
+		return (src->buffer[src->curpos]);
 	}
-	
-	char peek_char(struct source_s *src)
+
+	char	peek_char(t_source *src)
 	{
-		if(!src || !src->buffer)
+		long	pos;
+
+		if (!src || !src->buffer)
 		{
 			errno = ENODATA;
-			return ERRCHAR;
+			return (ERRCHAR);
 		}
-		long pos = src->curpos;
-		if(pos == INIT_SRC_POS)
-		{
+		pos = src->curpos;
+		if (pos == INIT_SRC_POS)
 			pos++;
-		}
 		pos++;
-		if(pos >= src->bufsize)
-		{
-			return EOF;
-		}
-		return src->buffer[pos];
+		if (pos >= src->bufsize)
+			return (EOF);
+		return (src->buffer[pos]);
 	}
-	
-	void skip_white_spaces(struct source_s *src)
+
+	void	skip_white_spaces(t_source *src)
 	{
-		char c;
-		
-		if(!src || !src->buffer)
-		{
-			return;
-		}
-		while(((c = peek_char(src)) != EOF) && (c == ' ' || c == '\t'))
-		{
+		char	c;
+
+		if (!src || !src->buffer)
+			return ;
+		while (((c = peek_char(src)) != EOF) && (c == ' ' || c == '\t'))
 			next_char(src);
-		}
 	}
+
 
 Функция unget_char() возвращает (или разгружает) последний символ, который мы извлекли из входных данных, обратно к источнику входных данных. Он делает это, просто манипулируя указателями исходной структуры. Вы увидите преимущества этой функции позже в этой серии.
 
@@ -435,7 +426,7 @@ Lookahead (или peek), чтобы проверить следующий сим
 
 Далее мы напишем функцию tokenize (), которая будет извлекать следующий токен из входных данных. Мы также напишем некоторые вспомогательные функции, которые помогут нам работать с входными токенами.
 
-В исходном каталоге, создайте файл под названием сканер.C и введите следующий код:
+В исходном каталоге, создайте файл под названием scaner.c и введите следующий код:
 
 	#include <stdlib.h>
 	#include <stdio.h>
@@ -681,7 +672,7 @@ eof_token - это специальный токен, который мы буд
 
 Каждый узел в AST команды должен содержать информацию о входном токене, который он представляет (например, текст исходного токена). Узел также должен содержать указатели на его дочерние узлы (если узел является корневым узлом), а также на его родственные узлы (если узел является дочерним узлом). Поэтому нам нужно будет определить еще одну структуру, struct node_s, которую мы будем использовать для представления узлов в нашем AST.
 
-Идти вперед и создать новый файл, узел.H и добавьте в него следующий код:
+Идти вперед и создать новый файл, node.h и добавьте в него следующий код:
 
 	#ifndef NODE_H
 	#define NODE_H
