@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 21:11:06 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/23 22:23:33 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/23 23:00:57 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 int						search_utils(int len, char **p, char **p2, char **file)
 {
-	char		path[len + 1 + 1];
+	char		path[len + 2];
 	struct stat	st;
 
 	strncpy(path, *p, *p2 - *p);

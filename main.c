@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 16:51:55 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/22 19:07:15 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/23 22:58:11 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "executor.h"
 #include "scanner.h"
 
-int		main(int argc, char **argv)
+int		main(int argc, char **argv, char **env)
 {
 	char		*cmd;
 	t_source	src;
