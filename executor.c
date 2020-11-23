@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 21:11:06 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/23 23:00:57 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/23 23:33:26 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,29 @@
 #include "executor.h"
 #include "scanner.h"
 
+int						search_utils2(char **p, char **p2, char *path, \
+							struct stat	*st)
+{
+	if (!S_ISREG(st->st_mode))
+	{
+		errno = ENOENT;
+		*p = *p2;
+		if (**p2 == ':')
+			(*p)++;
+		return (1);
+	}
+	*p = malloc(ft_strlen(path) + 1);
+	if (!*p)
+		return (0);
+	strcpy(*p, path);
+	return (2);
+}
+
 int						search_utils(int len, char **p, char **p2, char **file)
 {
 	char		path[len + 2];
 	struct stat	st;
+	int			i;
 
 	strncpy(path, *p, *p2 - *p);
 	path[*p2 - *p] = '\0';
@@ -27,19 +46,7 @@ int						search_utils(int len, char **p, char **p2, char **file)
 	strcat(path, *file);
 	if (stat(path, &st) == 0)
 	{
-		if (!S_ISREG(st.st_mode))
-		{
-			errno = ENOENT;
-			*p = *p2;
-			if (**p2 == ':')
-				(*p)++;
-			return (1);
-		}
-		*p = malloc(ft_strlen(path) + 1);
-		if (!*p)
-			return (NULL);
-		strcpy(*p, path);
-		return (2);
+		return (search_utils2(p, p2, path, &st));
 	}
 	else
 	{
@@ -52,10 +59,10 @@ int						search_utils(int len, char **p, char **p2, char **file)
 
 char					*search_path(char *file)
 {
-	char	*p;
-	char	*p2;
-	int		len[2];
-	int		i;
+	char		*p;
+	char		*p2;
+	int			len[2];
+	int			i;
 
 	p = getenv("PATH");
 	while (p && *p)
@@ -81,7 +88,7 @@ char					*search_path(char *file)
 
 int						do_exec_cmd(int argc, char **argv)
 {
-	char	*path;
+	char		*path;
 
 	if (strchr(argv[0], '/'))
 	{
@@ -108,8 +115,8 @@ static inline void		free_argv(int argc, char **argv)
 
 int						do_child(t_node *node, int *argc, char **argv[256])
 {
-	t_node	*child;
-	char	*str;
+	t_node		*child;
+	char		*str;
 
 	if (!node)
 		return (0);
@@ -135,12 +142,12 @@ int						do_child(t_node *node, int *argc, char **argv[256])
 	return (1);
 }
 
-int							do_simple_command(t_node *node)
+int						do_simple_command(t_node *node)
 {
-	pid_t	child_pid;
-	int		status;
-	int		argc;
-	char	*argv[256];
+	pid_t		child_pid;
+	int			status;
+	int			argc;
+	char		*argv[256];
 
 	if (!(do_child(node, &argc, &argv)))
 		return (0);
