@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 21:11:06 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/22 20:24:23 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/23 22:23:33 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,47 @@
 #include "executor.h"
 #include "scanner.h"
 
-int						search_utils()
+int						search_utils(int len, char **p, char **p2, char **file)
 {
-	
+	char		path[len + 1 + 1];
+	struct stat	st;
+
+	strncpy(path, *p, *p2 - *p);
+	path[*p2 - *p] = '\0';
+	if ((*p2)[-1] != '/')
+		strcat(path, "/");
+	strcat(path, *file);
+	if (stat(path, &st) == 0)
+	{
+		if (!S_ISREG(st.st_mode))
+		{
+			errno = ENOENT;
+			*p = *p2;
+			if (**p2 == ':')
+				(*p)++;
+			return (1);
+		}
+		*p = malloc(ft_strlen(path) + 1);
+		if (!*p)
+			return (NULL);
+		strcpy(*p, path);
+		return (2);
+	}
+	else
+	{
+		*p = *p2;
+		if (**p2 == ':')
+			(*p)++;
+	}
+	return (-1);
 }
 
 char					*search_path(char *file)
 {
-	int			plen;
-	char		*p;
-	char		*p2;
-	int			alen;
-	struct stat	st;
+	char	*p;
+	char	*p2;
+	int		len[2];
+	int		i;
 
 	p = getenv("PATH");
 	while (p && *p)
@@ -34,38 +63,17 @@ char					*search_path(char *file)
 		p2 = p;
 		while (*p2 && *p2 != ':')
 			p2++;
-		plen = p2 - p;
-		if (!plen)
-			plen = 1;
-		alen = ft_strlen(file);
-		char path[plen + 1 + alen + 1];
-		strncpy(path, p, p2 - p);
-		path[p2 - p] = '\0';
-		if (p2[-1] != '/')
-			strcat(path, "/");
-		strcat(path, file);
-		if (stat(path, &st) == 0)
-		{
-			if (!S_ISREG(st.st_mode))
-			{
-				errno = ENOENT;
-				p = p2;
-				if (*p2 == ':')
-					p++;
-				continue;
-			}
-			p = malloc(strlen(path) + 1);
-			if (!p)
-				return (NULL);
-			strcpy(p, path);
+		len[0] = p2 - p;
+		if (!len[0])
+			len[0] = 1;
+		len[1] = ft_strlen(file);
+		i = search_utils(len[0] + len[1], &p, &p2, &file);
+		if (i == 1)
+			continue;
+		if (i == 0)
+			return (NULL);
+		if (i == 2)
 			return (p);
-		}
-		else
-		{
-			p = p2;
-			if (*p2 == ':')
-				p++;
-		}
 	}
 	errno = ENOENT;
 	return (NULL);
