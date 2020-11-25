@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 15:00:45 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/25 22:50:30 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/25 23:04:47 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ t_symtab_entry		*add_to_symtab(char *symbol)
 		exit(EXIT_FAILURE);
 	}
 	memset(entry, 0, sizeof(t_symtab_entry));
-	entry->name = malloc(strlen(symbol) + 1);
+	entry->name = malloc(ft_strlen(symbol) + 1);
 	if (!entry->name)
 	{
 		fprintf(stderr, "fatal error: no memory for new symbol table entry\n");
@@ -196,9 +196,31 @@ void				symtab_entry_setval(t_symtab_entry *entry, char *val)
 	}
 }
 
+int					rem_from_symtab_utils(t_symtab_entry *entry, \
+						t_symtab *symtab)
+{
+	t_symtab_entry *e;
+	t_symtab_entry *p;
+
+	p = NULL;
+	e = symtab->first;
+	while (e && e != entry)
+	{
+		p = e;
+		e = e->next;
+	}
+	if (e == entry)
+	{
+		p->next = entry->next;
+		return (1);
+	}
+}
+
 int					rem_from_symtab(t_symtab_entry *entry, t_symtab *symtab)
 {
-	int res = 0;
+	int res;
+
+	res = 0;
 	if (entry->val)
 		free(entry->val);
 	if (entry->func_body)
@@ -212,20 +234,7 @@ int					rem_from_symtab(t_symtab_entry *entry, t_symtab *symtab)
 		res = 1;
 	}
 	else
-	{
-		t_symtab_entry *e = symtab->first;
-		t_symtab_entry *p = NULL;
-		while (e && e != entry)
-		{
-			p = e;
-			e = e->next;
-		}
-		if (e == entry)
-		{
-			p->next = entry->next;
-			res = 1;
-		}
-	}
+		res = rem_from_symtab(entry, symtab);
 	free(entry);
 	return (res);
 }
