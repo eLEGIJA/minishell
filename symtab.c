@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 15:00:45 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/25 23:04:47 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/25 23:29:12 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,28 @@ void				dump_local_symtab(void)
 	fprintf(stderr, "%*s------ -------------------------------- ------------\r\n", indent, " ");
 }
 
+void				add_to_symtab_util(t_symtab_entry *entry, \
+						t_symtab *st, char *symbol)
+{
+	entry->name = malloc(ft_strlen(symbol) + 1);
+	if (!entry->name)
+	{
+		fprintf(stderr, "fatal error: no memory for new symbol table entry\n");
+		exit(EXIT_FAILURE);
+	}
+	strcpy(entry->name, symbol);
+	if (!st->first)
+	{
+		st->first = entry;
+		st->last = entry;
+	}
+	else
+	{
+		st->last->next = entry;
+		st->last = entry;
+	}
+}
+
 t_symtab_entry		*add_to_symtab(char *symbol)
 {
 	t_symtab_entry	*entry;
@@ -120,23 +142,7 @@ t_symtab_entry		*add_to_symtab(char *symbol)
 		exit(EXIT_FAILURE);
 	}
 	memset(entry, 0, sizeof(t_symtab_entry));
-	entry->name = malloc(ft_strlen(symbol) + 1);
-	if (!entry->name)
-	{
-		fprintf(stderr, "fatal error: no memory for new symbol table entry\n");
-		exit(EXIT_FAILURE);
-	}
-	strcpy(entry->name, symbol);
-	if (!st->first)
-	{
-		st->first = entry;
-		st->last = entry;
-	}
-	else
-	{
-		st->last->next = entry;
-		st->last = entry;
-	}
+	add_to_symtab_util(entry, st, symbol);
 	return (entry);
 }
 
