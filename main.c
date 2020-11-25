@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 16:51:55 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/23 22:58:11 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/25 22:46:06 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int		main(int argc, char **argv, char **env)
 		src.buffer = cmd;
 		src.bufsize = ft_strlen(cmd);
 		src.curpos = INIT_SRC_POS;
-		parse_and_execute(&src);
+		parse_and_execute(&src, env);
 		free(cmd);
 	}
 	exit(EXIT_SUCCESS);
@@ -64,7 +64,7 @@ char	*read_cmd(char *buf)
 	return (buf);
 }
 
-int		parse_and_execute(t_source *src)
+int		parse_and_execute(t_source *src, char **env)
 {
 	t_token		*tok;
 	t_node		*cmd;
@@ -73,6 +73,7 @@ int		parse_and_execute(t_source *src)
 	tok = tokenize(src);
 	if (tok == &g_eof_token)
 		return (0);
+	initsh(env);
 	while (tok && tok != &g_eof_token)
 	{
 		cmd = parse_simple_command(tok);

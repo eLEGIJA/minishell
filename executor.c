@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 21:11:06 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/23 23:33:26 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/25 22:50:24 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,16 @@ int						do_child(t_node *node, int *argc, char **argv[256])
 		child = child->next_sibling;
 	}
 	argv[*argc] = NULL;
+	int i = 0;
+	for( ; i < g_builtins_count; i++)
+	{
+		if (strcmp(argv[0], g_builtins[i].name) == 0)
+		{
+			g_builtins[i].func(argc, argv);
+			free_argv(argc, argv);
+			return (1);
+		}
+	}
 	return (1);
 }
 
