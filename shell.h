@@ -21,6 +21,25 @@
 # include <sys/wait.h>
 # include "source.h"
 
+<<<<<<< HEAD
+=======
+int				parse_and_execute(t_source *src, char **env);
+void			print_prompt1(void);
+void			print_prompt2(void);
+char			*read_cmd(char *buf);
+int				get_next_line(int fd, char **line);
+char			*ft_strjoin(char const *s1, char const *s2);
+size_t			ft_strlen(const char *s);
+char			*ft_strdup(const char *s);
+void			ft_putchar_fd(char c, int fd);
+void			initsh(char **env);
+
+/*
+** shell builtin utilities
+*/
+int				dump(int argc, char **argv);
+
+>>>>>>> b1a6560897ec0d7b0d12af8cc37a532e551aa1a0
 /*
 ** struct for builtin utilities
 ** utility name
