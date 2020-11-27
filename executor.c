@@ -5,15 +5,21 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/17 21:11:06 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/25 22:50:24 by msafflow         ###   ########.fr       */
+/*   Created: 2020/11/27 18:28:37 by msafflow          #+#    #+#             */
+/*   Updated: 2020/11/27 19:38:39 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 #include "shell.h"
 #include "node.h"
 #include "executor.h"
-#include "scanner.h"
 
 int						search_utils2(char **p, char **p2, char *path, \
 							struct stat	*st)
@@ -113,68 +119,106 @@ static inline void		free_argv(int argc, char **argv)
 		free(argv[argc]);
 }
 
-int						do_child(t_node *node, int *argc, char **argv[256])
+int do_simple_command(t_node *node)
 {
-	t_node		*child;
-	char		*str;
+    if(!node)
+    {
+        return 0;
+    }
 
-	if (!node)
-		return (0);
-	child = node->first_child;
-	if (!child)
-		return (0);
-	*argc = 0;
-	while (child)
-	{
-		str = child->val.str;
-		argv[*argc] = malloc(ft_strlen(str) + 1);
-		if (!argv[*argc])
-		{
-			free_argv(*argc, argv);
-			return (0);
-		}
-		strcpy(argv[*argc], str);
-		if (++(*argc) >= 255)
-			break ;
-		child = child->next_sibling;
-	}
-	argv[*argc] = NULL;
-	int i = 0;
-	for( ; i < g_builtins_count; i++)
-	{
-		if (strcmp(argv[0], g_builtins[i].name) == 0)
-		{
-			g_builtins[i].func(argc, argv);
-			free_argv(argc, argv);
-			return (1);
-		}
-	}
-	return (1);
-}
+    t_node *child = node->first_child;
+    if(!child)
+    {
+        return 0;
+    }
+    
+    int argc = 0;           /* arguments count */
+    int targc = 0;          /* total alloc'd arguments count */
+    char **argv = NULL;
+    char *str;
 
-int						do_simple_command(t_node *node)
-{
-	pid_t		child_pid;
-	int			status;
-	int			argc;
-	char		*argv[256];
+    while(child)
+    {
+        str = child->val.str;
+        /*perform word expansion */
+        t_word *w = word_expand(str);
+        
+        /* word expansion failed */
+        if(!w)
+        {
+            child = child->next_sibling;
+            continue;
+        }
 
-	if (!(do_child(node, &argc, &argv)))
-		return (0);
-	if ((child_pid = fork()) == 0)
-	{
-		do_exec_cmd(argc, argv);
-		fprintf(stderr, "error: failed to execute command: %s\n",
-				strerror(errno));
-	}
-	else if (child_pid < 0)
-	{
-		fprintf(stderr, "error: failed to fork command: %s\n",
-			strerror(errno));
-		return (0);
-	}
-	status = 0;
-	waitpid(child_pid, &status, 0);
-	free_argv(argc, argv);
-	return (1);
+        /* add the words to the arguments list */
+        t_word *w2 = w;
+        while(w2)
+        {
+            if(check_buffer_bounds(&argc, &targc, &argv))
+            {
+                str = malloc(strlen(w2->data)+1);
+                if(str)
+                {
+                    strcpy(str, w2->data);
+                    argv[argc++] = str;
+                }
+            }
+            w2 = w2->next;
+        }
+        
+        /* free the memory used by the expanded words */
+        free_all_words(w);
+        
+        /* check the next word */
+        child = child->next_sibling;
+    }
+
+    /* even if arc == 0, we need to alloc memory for argv */
+    if(check_buffer_bounds(&argc, &targc, &argv))
+    {
+        /* NULL-terminate the array */
+        argv[argc] = NULL;
+    }
+
+    int i = 0;
+    for( ; i < g_builtins_count; i++)
+    {
+        if(strcmp(argv[0], g_builtins[i].name) == 0)
+        {
+            g_builtins[i].func(argc, argv);
+            free_buffer(argc, argv);
+            return 1;
+        }
+    }
+
+    pid_t child_pid = 0;
+    if((child_pid = fork()) == 0)
+    {
+        do_exec_cmd(argc, argv);
+        fprintf(stderr, "error: failed to execute command: %s\n", strerror(errno));
+        if(errno == ENOEXEC)
+        {
+            exit(126);
+        }
+        else if(errno == ENOENT)
+        {
+            exit(127);
+        }
+        else
+        {
+            exit(EXIT_FAILURE);
+        }
+    }
+    else if(child_pid < 0)
+    {
+        fprintf(stderr, "error: failed to fork command: %s\n", strerror(errno));
+	free_buffer(argc, argv);
+        return 0;
+    }
+
+    int status = 0;
+    waitpid(child_pid, &status, 0);
+    free_buffer(argc, argv);
+    
+    return 1;
 }

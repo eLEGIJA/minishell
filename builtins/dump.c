@@ -5,13 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/25 20:49:28 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/25 20:51:51 by msafflow         ###   ########.fr       */
+/*   Created: 2020/11/27 18:18:29 by msafflow          #+#    #+#             */
+/*   Updated: 2020/11/27 18:18:33 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "shell.h"
-#include "symtab.h"
+#include "../shell.h"
+#include "../symtab/symtab.h"
 
 int		dump(int argc, char **argv)
 {

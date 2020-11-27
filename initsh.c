@@ -6,13 +6,13 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 20:25:09 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/25 22:56:38 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/27 19:22:29 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
 #include "shell.h"
-#include "symtab.h"
+#include "symtab/symtab.h"
 
 void		initsh_utils(int len, t_symtab_entry *entry, char **p2, char *eq)
 {
@@ -46,9 +46,7 @@ void		initsh(char **env)
 			initsh_utils(len, entry, p2, eq);
 		}
 		else
-		{
 			entry = add_to_symtab(*p2);
-		}
 		p2++;
 	}
 	entry = add_to_symtab("PS1");

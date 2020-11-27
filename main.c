@@ -6,15 +6,11 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 16:51:55 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/25 22:46:06 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/27 19:53:48 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
-#include "source.h"
-#include "parser.h"
-#include "executor.h"
-#include "scanner.h"
 
 int		main(int argc, char **argv, char **env)
 {

@@ -6,12 +6,13 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 17:21:25 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/18 20:15:19 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/27 18:32:35 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
 #include "source.h"
+#include <errno.h>
 
 void	unget_char(t_source *src)
 {

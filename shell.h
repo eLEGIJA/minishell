@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 16:58:44 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/26 21:59:14 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/27 21:56:36 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,27 +19,13 @@
 # include <errno.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
+# include <glob.h>
 # include "source.h"
+# include "scanner.h"
+# include "parser.h"
+# include "executor.h"
+# include "node.h"
 
-<<<<<<< HEAD
-=======
-int				parse_and_execute(t_source *src, char **env);
-void			print_prompt1(void);
-void			print_prompt2(void);
-char			*read_cmd(char *buf);
-int				get_next_line(int fd, char **line);
-char			*ft_strjoin(char const *s1, char const *s2);
-size_t			ft_strlen(const char *s);
-char			*ft_strdup(const char *s);
-void			ft_putchar_fd(char c, int fd);
-void			initsh(char **env);
-
-/*
-** shell builtin utilities
-*/
-int				dump(int argc, char **argv);
-
->>>>>>> b1a6560897ec0d7b0d12af8cc37a532e551aa1a0
 /*
 ** struct for builtin utilities
 ** utility name
@@ -78,16 +64,32 @@ size_t				ft_strlen(const char *s);
 char				*ft_strdup(const char *s);
 void				ft_putchar_fd(char c, int fd);
 void				initsh(char **env);
-t_word				*make_word(char *str);
+int					dump(int argc, char **argv);
+t_word				*make_word(char *word);
 void				free_all_words(t_word *first);
+size_t				find_closing_quote(char *data);
+size_t				find_closing_brace(char *data);
+void				delete_char_at(char *str, size_t index);
+char				*substitute_str(char *s1, char *s2, \
+						size_t start, size_t end);
+char				*wordlist_to_str(t_word *word);
+t_word				*word_expand(char *orig_word);
+char				*word_expand_to_str(char *word);
+char				*tilde_expand(char *s);
+char				*command_substitute(char *__cmd);
+char				*var_expand(char *__var_name);
+char				*pos_params_expand(char *tmp, int in_double_quotes);
+t_word				*pathnames_expand(t_word *words);
+t_word				*field_split(char *str);
+void				remove_quotes(t_word *wordlist);
+char				*arithm_expand(char *__expr);
 char				*strchr_any(char *string, char *chars);
 char				*quote_val(char *val, int add_quotes);
 int					check_buffer_bounds(int *count, int *len, char ***buf);
 void				free_buffer(int len, char **buf);
-
-/*
-** shell builtin utilities
-*/
-int					dump(int argc, char **argv);
+int					has_glob_chars(char *p, size_t len);
+int					match_prefix(char *pattern, char *str, int longest);
+int					match_suffix(char *pattern, char *str, int longest);
+char				**get_filename_matches(char *pattern, glob_t *matches);
 
 #endif

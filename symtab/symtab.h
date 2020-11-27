@@ -6,14 +6,14 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 00:25:57 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/25 14:58:10 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/27 18:20:23 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SYMTAB_H
 # define SYMTAB_H
 
-# include "node.h"
+# include "../node.h"
 
 # define MAX_SYMTAB	256
 
