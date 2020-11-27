@@ -6,7 +6,7 @@
 #    By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/27 20:03:38 by msafflow          #+#    #+#              #
-#    Updated: 2020/11/27 20:05:00 by msafflow         ###   ########.fr        #
+#    Updated: 2020/11/27 22:54:59 by msafflow         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ SRCS=main.c prompt.c node.c parser.c scanner.c source.c executor.c initsh.c  \
 OBJS=$(SRCS:%.c=$(BUILD_DIR)/%.o)
 
 # output file name
-TARGET=shell
+TARGET=minishell
 
 # default target (when we call make with no arguments)
 .PHONY: all
