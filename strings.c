@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 21:52:12 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/27 19:21:46 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/28 19:49:17 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,9 @@ char			*quote_val(char *val, int add_quotes)
 
 int				check_buffer_bounds(int *count, int *len, char ***buf)
 {
+	int			newlen;
+	char		**hn2;
+
 	if (*count >= *len)
 	{
 		if (!(*buf))
@@ -131,8 +134,8 @@ int				check_buffer_bounds(int *count, int *len, char ***buf)
 		}
 		else
 		{
-			int newlen = (*len) * 2;
-			char **hn2 = realloc(*buf, newlen * sizeof(char **));
+			newlen = (*len) * 2;
+			hn2 = realloc(*buf, newlen * sizeof(char **));
 			if (!hn2)
 				return (0);
 			*buf = hn2;

@@ -6,7 +6,7 @@
 /*   By: msafflow <msafflow@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 16:58:44 by msafflow          #+#    #+#             */
-/*   Updated: 2020/11/27 21:56:36 by msafflow         ###   ########.fr       */
+/*   Updated: 2020/11/28 20:09:12 by msafflow         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,21 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <errno.h>
+# include <glob.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
-# include <glob.h>
 # include "source.h"
-# include "scanner.h"
-# include "parser.h"
 # include "executor.h"
 # include "node.h"
+# include "parser.h"
+# include "scanner.h"
 
 /*
 ** struct for builtin utilities
 ** utility name
 ** function to call to execute the utility
 */
+
 typedef struct		s_builtin
 {
 	char			*name;
@@ -40,11 +41,13 @@ typedef struct		s_builtin
 /*
 ** the list of builtin utilities
 */
+
 t_builtin			g_builtins[];
 
 /*
 ** and their count
 */
+
 extern int			g_builtins_count;
 
 typedef struct		s_word
@@ -64,9 +67,14 @@ size_t				ft_strlen(const char *s);
 char				*ft_strdup(const char *s);
 void				ft_putchar_fd(char c, int fd);
 void				initsh(char **env);
-int					dump(int argc, char **argv);
-t_word				*make_word(char *word);
+t_word				*make_word(char *str);
 void				free_all_words(t_word *first);
+char				*strchr_any(char *string, char *chars);
+char				*quote_val(char *val, int add_quotes);
+int					check_buffer_bounds(int *count, int *len, char ***buf);
+void				free_buffer(int len, char **buf);
+t_word				*make_word(char *word);
+void				ree_all_words(t_word *first);
 size_t				find_closing_quote(char *data);
 size_t				find_closing_brace(char *data);
 void				delete_char_at(char *str, size_t index);
@@ -91,5 +99,6 @@ int					has_glob_chars(char *p, size_t len);
 int					match_prefix(char *pattern, char *str, int longest);
 int					match_suffix(char *pattern, char *str, int longest);
 char				**get_filename_matches(char *pattern, glob_t *matches);
+int					dump(int argc, char **argv);
 
 #endif
